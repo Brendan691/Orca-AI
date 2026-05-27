@@ -64,50 +64,40 @@
 
 | 你需要有 | 怎么获取 |
 |----------|----------|
-| Python 3.10+ | [python.org](https://www.python.org/downloads/) 下载安装 |
-| 通义千问 API Key | [dashscope.console.aliyun.com](https://dashscope.console.aliyun.com/) 注册，开通模型服务 |
+| Python 3.10+ 或 Docker | [python.org](https://www.python.org/downloads/) 或 [Docker Desktop](https://www.docker.com/) |
+| 通义千问 API Key | [dashscope.console.aliyun.com](https://dashscope.console.aliyun.com/) 免费注册，开通模型服务 |
 | Chrome 浏览器 | 装插件用 |
 
-### 第一步：初始化
+### 第一步：打开终端
 
-打开终端（Mac 按 `Cmd+空格` 搜索"终端"），输入：
+Mac 按 `Cmd+空格` 搜索"终端"，输入：
 
 ```bash
-# 进入项目目录
 cd ~/Desktop/26大创/小鲸OrcaAI
-
-# 运行初始化脚本（自动安装依赖、生成图标）
-bash scripts/setup.sh
 ```
 
-脚本运行过程中你不需要操作，等待完成即可。
-
-### 第二步：填写 API Key
-
-用任意文本编辑器（如"文本编辑"或 VS Code）打开 `backend/.env` 文件：
-
-找到这一行：
-```
-DASHSCOPE_API_KEY=your_dashscope_api_key_here
-```
-
-把 `your_dashscope_api_key_here` 替换成你的真实 API Key，保存文件。
-
-### 第三步：启动
+### 第二步：启动（一条命令搞定一切）
 
 ```bash
-bash backend/run.sh
+bash run.sh
 ```
 
-看到类似下面的输出就说明成功了：
+首次运行会引导你输入 API Key（从 https://dashscope.console.aliyun.com 获取），之后自动安装依赖、生成图标、启动全部服务。
+
+### 第三步：打开管理后台
+
+浏览器自动打开 http://localhost:8501，或者手动访问。
+
+看到下面的输出就说明成功了：
 ```
-✅ 环境检查通过
+🎉 小鲸 OrcaAI 已启动！
 
-  后端地址：    http://localhost:8000
-  API 文档：    http://localhost:8000/docs
-  健康检查：    http://localhost:8000/health
+  📡 后端 API：  http://localhost:8000
+  📊 管理后台：  http://localhost:8501
+  📖 API 文档：  http://localhost:8000/docs
 
-按 Ctrl+C 停止服务
+  停止服务：    bash run.sh stop
+  查看状态：    bash run.sh status
 ```
 
 ---
@@ -118,25 +108,14 @@ bash backend/run.sh
 
 ```bash
 cd ~/Desktop/26大创/小鲸OrcaAI
-
-# 前台运行（终端关掉就停）
-bash backend/run.sh
-
-# 或后台运行（终端关了也在跑）
-bash backend/run.sh -d
+bash run.sh
 ```
 
 验证是否启动成功：浏览器打开 http://localhost:8000/health ，看到 `{"status":"healthy"}` 就 OK。
 
 ### 2. 打开管理后台
 
-新开一个终端窗口，输入：
-
-```bash
-streamlit run admin/app.py
-```
-
-浏览器会自动打开 http://localhost:8501
+`bash run.sh` 已自动启动管理后台，浏览器打开 http://localhost:8501 即可。
 
 管理后台可以：
 - **系统概览**：查看知识库有多少文档、什么标签

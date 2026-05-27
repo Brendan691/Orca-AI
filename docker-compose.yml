@@ -1,43 +1,52 @@
 # ============================================================
 # 文件：docker-compose.yml
 # 作用：一键启动小鲸 OrcaAI 全部服务
-# 用法：docker-compose up -d
+# 用法：docker compose up -d（或 bash run.sh）
 #
 # 包含服务：
-#   - backend：FastAPI 后端（API + Chroma 向量数据库）
-#   - admin：  Streamlit 管理后台
+#   backend — FastAPI 后端（API + Chroma 向量数据库 + 定时任务）
+#   admin   — Streamlit 管理后台（Web 界面）
 # ============================================================
-
-version: "3.8"
 
 services:
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: orcaai-backend
     ports:
       - "8000:8000"
     volumes:
-      # Chroma 持久化存储，重启不丢数据
+      # Chroma 向量数据库持久化（重启不丢数据）
       - chroma_data:/app/backend/chroma_db
     env_file:
-      - backend/.env
+      - .env
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 10s
 
   admin:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: orcaai-admin
     ports:
       - "8501:8501"
-    command: streamlit run admin/app.py --server.address 0.0.0.0 --server.port 8501
+    command: >
+      streamlit run /app/admin/app.py
+      --server.address 0.0.0.0
+      --server.port 8501
+      --server.headless true
+      --browser.gatherUsageStats false
     environment:
-      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+      - STREAMLIT_SERVER_RUN_ON_SAVE=false
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

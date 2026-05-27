@@ -98,7 +98,7 @@ with st.sidebar:
 
     page = st.radio(
         "导航",
-        ["📊 系统概览", "📄 文档管理", "🔍 知识搜索", "💬 知识问答", "⚙️ 设置"],
+        ["📊 系统概览", "📄 文档管理", "🔍 知识搜索", "💬 知识问答", "🧩 插件安装", "⚙️ 设置"],
         label_visibility="collapsed",
     )
 
@@ -108,7 +108,7 @@ with st.sidebar:
     if status_data and status_data.get("status") == "healthy":
         st.success("🟢 后端服务运行中")
     else:
-        st.error("🔴 后端未连接\n\n请先运行 `bash backend/run.sh`")
+        st.error("🔴 后端未连接\n\n请在项目根目录运行 `bash run.sh` 启动")
 
     st.caption(f"API: {get_api_base()}")
     st.caption("v0.1.0 | Made with ❤️")
@@ -328,7 +328,76 @@ elif page == "💬 知识问答":
 
 
 # ============================================================
-# 页面 5：设置
+# 页面 5：插件安装
+# ============================================================
+elif page == "🧩 插件安装":
+    st.markdown('<p class="main-header">🧩 Chrome 插件安装指南</p>', unsafe_allow_html=True)
+    st.markdown("安装浏览器插件后，浏览网页时一键收藏到知识库")
+
+    st.markdown("---")
+
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+        st.markdown("### 📌 安装步骤")
+        st.markdown("""
+        **1.** 打开 Chrome 浏览器
+
+        **2.** 地址栏输入：
+        `chrome://extensions/`
+
+        **3.** 打开右上角
+        **开发者模式** 开关
+
+        **4.** 点击左上角
+        **加载已解压的扩展程序**
+
+        **5.** 选择项目的
+        `extension/` 文件夹
+
+        **6.** 完成！工具栏出现
+        小鲸图标 🐳
+        """)
+
+    with col2:
+        st.info("""
+        💡 **找不到图标？**
+
+        点击 Chrome 工具栏右侧的拼图图标 🧩，找到"小鲸OrcaAI"，点图钉 📌 固定到工具栏。
+
+        ---
+
+        ⚙️ **后端地址设置**
+
+        插件默认连接 `http://localhost:8000`。
+        如果后端部署在其他地址（如服务器），点击插件图标后在下方的设置中修改。
+
+        ---
+
+        🔄 **插件更新**
+
+        改完插件代码后，到 `chrome://extensions/` 找到插件，点右下角的刷新按钮 🔄 即可。
+        """)
+
+    st.markdown("---")
+    st.markdown("### 🎯 使用方法")
+
+    col_a, col_b, col_c = st.columns(3)
+    with col_a:
+        st.markdown("**📥 收藏网页**")
+        st.markdown("浏览航运文章 → 点插件图标 → 点「收藏到知识库」→ AI 自动打标签")
+    with col_b:
+        st.markdown("**💬 知识问答**")
+        st.markdown("点插件图标 → 下方问答框输入问题 → 回车 → AI 从知识库找答案")
+    with col_c:
+        st.markdown("**🔍 管理知识**")
+        st.markdown("打开管理后台 → 查看/搜索/删除已收藏的文档")
+
+    st.markdown("---")
+    st.caption("💡 提示：插件和后端必须同时运行。如果收藏失败，检查 `bash run.sh` 是否在运行。")
+
+# ============================================================
+# 页面 6：设置
 # ============================================================
 elif page == "⚙️ 设置":
     st.markdown('<p class="main-header">⚙️ 设置</p>', unsafe_allow_html=True)
