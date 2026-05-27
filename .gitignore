@@ -9,10 +9,10 @@ dist/
 venv/
 .venv/
 
-# 环境变量（包含 API Key，绝对不能上传）
+# 环境变量
 .env
 
-# Chroma 向量数据库（本地数据）
+# Chroma 向量数据库（本地数据库）
 chroma_db/
 
 # 系统文件
