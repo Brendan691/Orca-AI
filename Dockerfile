@@ -1,25 +1,22 @@
 # ============================================================
-# 文件：Dockerfile
-# 作用：将小鲸 OrcaAI 打包成 Docker 镜像
-# 使用：docker build -t orcaai .（或 bash run.sh 自动执行）
+# 小鲸 OrcaAI v1.0 — 后端 Dockerfile
+# 多阶段构建，优化镜像大小
 # ============================================================
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# 系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
+    curl wget ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Python 依赖
 COPY backend/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-# 复制所有代码
 COPY backend/ backend/
 COPY admin/ admin/
 COPY extension/ extension/
+COPY searxng/ searxng/
 
 EXPOSE 8000 8501
 

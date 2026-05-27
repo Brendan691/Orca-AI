@@ -1,8 +1,7 @@
 /**
- * 小鲸OrcaAI Chrome Extension - Popup逻辑
+ * 小鲸OrcaAI v0.2.0 — Popup 逻辑 (Chrome + Edge)
  */
 
-// DOM元素
 const pageTitle = document.getElementById('pageTitle');
 const pageUrl = document.getElementById('pageUrl');
 const saveBtn = document.getElementById('saveBtn');
@@ -11,14 +10,12 @@ const chatMessages = document.getElementById('chatMessages');
 const chatInput = document.getElementById('chatInput');
 const sendBtn = document.getElementById('sendBtn');
 const apiUrlInput = document.getElementById('apiUrl');
+const searchToggle = document.getElementById('searchInternet');
 
-// 状态
 let currentTab = null;
 let apiBaseUrl = 'http://localhost:8000';
 
-// 初始化
 async function init() {
-  // 获取当前标签页
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   currentTab = tabs[0];
 
@@ -27,30 +24,32 @@ async function init() {
     pageUrl.textContent = currentTab.url || '';
   }
 
-  // 加载保存的API地址
-  const stored = await chrome.storage.local.get('apiUrl');
+  const stored = await chrome.storage.local.get(['apiUrl', 'searchInternet']);
   if (stored.apiUrl) {
     apiBaseUrl = stored.apiUrl;
     apiUrlInput.value = apiBaseUrl;
   }
+  if (stored.searchInternet !== undefined) {
+    searchToggle.checked = stored.searchInternet;
+  }
 
-  // API地址变更时保存
   apiUrlInput.addEventListener('change', async () => {
     apiBaseUrl = apiUrlInput.value.trim() || 'http://localhost:8000';
     await chrome.storage.local.set({ apiUrl: apiBaseUrl });
   });
+
+  searchToggle.addEventListener('change', async () => {
+    await chrome.storage.local.set({ searchInternet: searchToggle.checked });
+  });
 }
 
-// 收藏当前页面
 async function saveCurrentPage() {
   if (!currentTab || !currentTab.url) {
     showStatus('无法获取页面信息', 'error');
     return;
   }
-
-  // 禁止保存Chrome内部页面
-  if (currentTab.url.startsWith('chrome://') || currentTab.url.startsWith('chrome-extension://')) {
-    showStatus('无法保存Chrome内部页面', 'error');
+  if (currentTab.url.startsWith('chrome://') || currentTab.url.startsWith('edge://') || currentTab.url.startsWith('chrome-extension://')) {
+    showStatus('无法保存浏览器内部页面', 'error');
     return;
   }
 
@@ -61,10 +60,7 @@ async function saveCurrentPage() {
     const response = await fetch(`${apiBaseUrl}/api/documents/upload`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        url: currentTab.url,
-        title: currentTab.title,
-      }),
+      body: JSON.stringify({ url: currentTab.url, title: currentTab.title }),
     });
 
     const result = await response.json();
@@ -88,11 +84,9 @@ async function saveCurrentPage() {
   }
 }
 
-// 显示状态
 function showStatus(message, type) {
   saveStatus.textContent = message;
   saveStatus.className = 'save-status ' + type;
-
   if (type !== 'loading') {
     setTimeout(() => {
       saveStatus.textContent = '';
@@ -101,7 +95,6 @@ function showStatus(message, type) {
   }
 }
 
-// 添加聊天消息
 function addMessage(content, role) {
   const div = document.createElement('div');
   div.className = `message ${role}-message`;
@@ -110,18 +103,15 @@ function addMessage(content, role) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// 发送聊天消息
 async function sendMessage() {
   const message = chatInput.value.trim();
   if (!message) return;
 
-  // 显示用户消息
   addMessage(message, 'user');
   chatInput.value = '';
 
-  // 显示加载中
   const loadingDiv = document.createElement('div');
-  loadingDiv.className = 'message assistant-message';
+  loadingDiv.className = 'message assistant-message loading';
   loadingDiv.textContent = '小鲸正在思考...';
   chatMessages.appendChild(loadingDiv);
   chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -130,15 +120,15 @@ async function sendMessage() {
     const response = await fetch(`${apiBaseUrl}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({
+        message,
+        search_internet: searchToggle.checked,
+      }),
     });
 
     const result = await response.json();
-
-    // 移除加载提示
     chatMessages.removeChild(loadingDiv);
 
-    // 显示回答
     let answer = result.answer;
     if (result.sources && result.sources.length > 0) {
       answer += '\n\n📚 参考来源：';
@@ -147,19 +137,16 @@ async function sendMessage() {
       });
     }
     addMessage(answer, 'assistant');
-
   } catch (error) {
     chatMessages.removeChild(loadingDiv);
     addMessage(`请求失败：${error.message}，请检查后端服务是否运行`, 'assistant');
   }
 }
 
-// 事件绑定
 saveBtn.addEventListener('click', saveCurrentPage);
 sendBtn.addEventListener('click', sendMessage);
 chatInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
 
-// 启动
 init();

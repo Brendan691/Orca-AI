@@ -8,16 +8,15 @@
 </head>
 <body>
   <div class="container">
-    <!-- 头部 -->
     <div class="header">
       <div class="logo">
         <span class="emoji">🐳</span>
         <span class="title">小鲸OrcaAI</span>
+        <span class="version">v0.2</span>
       </div>
-      <div class="subtitle">海事知识管理</div>
+      <div class="subtitle">AI 驱动海事知识管理</div>
     </div>
 
-    <!-- 收藏区域 -->
     <div class="section save-section">
       <div class="current-page" id="currentPage">
         <div class="page-title" id="pageTitle">正在获取页面信息...</div>
@@ -30,9 +29,14 @@
       <div class="save-status" id="saveStatus"></div>
     </div>
 
-    <!-- 问答区域 -->
     <div class="section chat-section">
-      <div class="section-title">💬 知识库问答</div>
+      <div class="section-title">
+        <span>💬 知识库问答</span>
+        <label class="toggle-label" title="同时搜索互联网">
+          <input type="checkbox" id="searchInternet">
+          <span class="toggle-text">🌐 联网</span>
+        </label>
+      </div>
       <div class="chat-messages" id="chatMessages">
         <div class="message system-message">
           你好！我是小鲸OrcaAI，可以帮你查询已收藏的海事知识。试着问我关于航运、港口、船舶的问题吧！
@@ -49,12 +53,16 @@
       </div>
     </div>
 
-    <!-- 设置区域 -->
     <div class="section settings-section">
       <div class="section-title">⚙️ 设置</div>
       <div class="setting-item">
         <label>后端地址</label>
         <input type="text" id="apiUrl" value="http://localhost:8000" placeholder="http://localhost:8000">
+      </div>
+      <div class="setting-hint">
+        <p>💡 快捷键 <kbd>Cmd+Shift+S</kbd> 一键收藏</p>
+        <p>🖱️ 右键菜单也可收藏</p>
+        <p>🌐 支持 Chrome 和 Edge 浏览器</p>
       </div>
     </div>
   </div>

@@ -1,11 +1,6 @@
 # ============================================================
-# 文件：docker-compose.yml
-# 作用：一键启动小鲸 OrcaAI 全部服务
-# 用法：docker compose up -d（或 bash run.sh）
-#
-# 包含服务：
-#   backend — FastAPI 后端（API + Chroma 向量数据库 + 定时任务）
-#   admin   — Streamlit 管理后台（Web 界面）
+# 小鲸 OrcaAI v0.2.0 — 完整服务栈
+# 参照 OmniBox 架构，海事领域深度定制
 # ============================================================
 
 services:
@@ -15,19 +10,43 @@ services:
       dockerfile: Dockerfile
     container_name: orcaai-backend
     ports:
-      - "8000:8000"
+      - "${APP_PORT:-8000}:8000"
     volumes:
-      # Chroma 向量数据库持久化（重启不丢数据）
       - chroma_data:/app/backend/chroma_db
+      - uploads:/app/uploads
     env_file:
       - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://orcaai:orcaai@postgres:5432/orcaai
+      - DATABASE_URL_SYNC=postgresql://orcaai:orcaai@postgres:5432/orcaai
+      - MINIO_ENDPOINT=minio:9000
+      - MEILI_HOST=http://meilisearch:7700
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: orcaai-web
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${APP_PORT:-8000}
+      - NEXT_PUBLIC_APP_NAME=小鲸OrcaAI
+    depends_on:
+      - backend
+    restart: unless-stopped
 
   admin:
     build:
@@ -49,6 +68,76 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  postgres:
+    image: postgres:17
+    container_name: orcaai-postgres
+    environment:
+      POSTGRES_DB: orcaai
+      POSTGRES_USER: orcaai
+      POSTGRES_PASSWORD: orcaai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "orcaai", "-U", "orcaai"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: orcaai-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: orcaaiadmin
+      MINIO_ROOT_PASSWORD: orcaaiadmin
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-I", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.10
+    container_name: orcaai-meili
+    environment:
+      MEILI_MASTER_KEY: orcaai-meili-key
+      MEILI_ENV: development
+    ports:
+      - "${MEILI_PORT:-7700}:7700"
+    volumes:
+      - meili_data:/meili_data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O-", "http://localhost:7700/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: orcaai-searxng
+    ports:
+      - "${SEARXNG_PORT:-8888}:8080"
+    volumes:
+      - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
+      - ./searxng/limiter.toml:/etc/searxng/limiter.toml:ro
+    restart: unless-stopped
+
 volumes:
   chroma_data:
+    driver: local
+  postgres_data:
+    driver: local
+  minio_data:
+    driver: local
+  meili_data:
+    driver: local
+  uploads:
     driver: local

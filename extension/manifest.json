@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "小鲸OrcaAI - 海事知识收藏",
-  "version": "0.1.0",
-  "description": "一键收藏网页到海事知识库，AI自动分类，智能问答",
+  "version": "0.2.0",
+  "description": "一键收藏网页到海事知识库，AI自动分类，智能问答。支持 Chrome 和 Edge 浏览器。",
   "permissions": [
     "activeTab",
     "storage",
-    "scripting"
+    "scripting",
+    "contextMenus"
   ],
   "host_permissions": [
     "http://localhost:8000/*",
@@ -31,7 +32,17 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "css": ["content.css"]
     }
-  ]
+  ],
+  "commands": {
+    "save-to-knowledge-base": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "一键收藏当前页面到知识库"
+    }
+  }
 }

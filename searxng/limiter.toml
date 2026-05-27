@@ -1,0 +1,3 @@
+# SearXNG rate limiter
+[botdetection.ip_limit]
+link_token = true

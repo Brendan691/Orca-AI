@@ -1,5 +1,5 @@
-# 海事四维标签体系
-# 小鲸OrcaAI - 海事知识管理标签配置
+# 海事四维标签体系 v2.0
+# 小鲸OrcaAI — 扩展同义词库，提升规则引擎精度
 
 dimensions:
   - name: business_type
@@ -22,6 +22,9 @@ dimensions:
       - 海事法律
       - 船员服务
       - 船舶供应
+      - 多式联运
+      - 冷链物流
+      - 跨境电商物流
 
   - name: geographic_region
     display_name: 地理区域
@@ -41,10 +44,12 @@ dimensions:
       - 波罗的海
       - 黑海
       - 红海
+      - 亚丁湾
       - 北极航线
       - 中国沿海
       - 长江经济带
       - 粤港澳大湾区
+      - 海南自贸港
 
   - name: topic_category
     display_name: 主题类别
@@ -70,6 +75,9 @@ dimensions:
       - 劳工纠纷
       - 海盗袭击
       - 海上搜救
+      - IMO新规
+      - 脱碳目标
+      - 替代燃料
 
   - name: event_nature
     display_name: 事件性质
@@ -95,8 +103,9 @@ dimensions:
       - 技术突破
       - 市场预测
       - 行业会议
+      - 新船交付
+      - 航线首航
 
-# 标签分类提示词模板
 tag_classification_prompt: |
   你是一位海事航运领域的专家。请仔细阅读以下文章内容，
   从四个维度进行分类。每个维度最多选择3个最相关的标签。

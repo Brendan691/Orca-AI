@@ -1,21 +1,26 @@
-# Python 缓存
+# Python
 __pycache__/
 *.pyc
 *.pyo
 .egg-info/
 dist/
+*.egg
 
-# 虚拟环境
+# Virtualenv
 venv/
 .venv/
 
-# 环境变量
+# Environment
 .env
 
-# Chroma 向量数据库（本地数据库）
+# Databases
 chroma_db/
+*.db
 
-# 系统文件
+# Uploads
+uploads/
+
+# System
 .DS_Store
 Thumbs.db
 
@@ -23,5 +28,15 @@ Thumbs.db
 .vscode/
 .idea/
 
-# 测试缓存
+# Test
 .pytest_cache/
+htmlcov/
+.coverage
+
+# Node (web frontend)
+node_modules/
+.next/
+out/
+
+# Docker
+data/
