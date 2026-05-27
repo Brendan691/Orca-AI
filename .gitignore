@@ -1,0 +1,27 @@
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+.egg-info/
+dist/
+
+# 虚拟环境
+venv/
+.venv/
+
+# 环境变量（包含 API Key，绝对不能上传）
+.env
+
+# Chroma 向量数据库（本地数据）
+chroma_db/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# 测试缓存
+.pytest_cache/

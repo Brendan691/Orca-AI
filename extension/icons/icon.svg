@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 圆形背景 -->
+  <circle cx="64" cy="64" r="62" fill="#1a73e8" stroke="#1557b0" stroke-width="2"/>
+  <!-- 虎鲸 (Orca) 身体 -->
+  <ellipse cx="64" cy="66" rx="30" ry="22" fill="#1c1c1c"/>
+  <!-- 白色腹部 -->
+  <ellipse cx="64" cy="74" rx="18" ry="12" fill="white"/>
+  <!-- 白色眼斑 -->
+  <ellipse cx="46" cy="54" rx="7" ry="5" fill="white"/>
+  <!-- 眼睛 -->
+  <circle cx="46" cy="54" r="2.5" fill="#1c1c1c"/>
+  <!-- 背鳍 -->
+  <path d="M64 44 L58 30 L70 44" fill="#1c1c1c"/>
+  <!-- 尾鳍 -->
+  <path d="M88 66 L100 56 L98 66 L100 76 Z" fill="#1c1c1c"/>
+  <!-- 胸鳍 -->
+  <path d="M52 68 L42 80 L52 76 Z" fill="#1c1c1c"/>
+  <!-- 水花 -->
+  <circle cx="30" cy="40" r="3" fill="#87ceeb" opacity="0.6"/>
+  <circle cx="22" cy="50" r="2" fill="#87ceeb" opacity="0.4"/>
+  <circle cx="34" cy="32" r="1.5" fill="#87ceeb" opacity="0.5"/>
+</svg>
