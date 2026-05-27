@@ -40,3 +40,6 @@ out/
 
 # Docker
 data/
+
+# Agent skills (local only)
+.agents/
